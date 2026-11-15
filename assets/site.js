@@ -172,23 +172,21 @@
     const obj = wrap.querySelector('.logo3d-obj');
     const spin = document.createElement('div');
     spin.className = 'logo3d-spin';
-    const DEPTH = 14, LAYERS = 10;
-    // front face
-    const front = document.createElement('span');
-    front.style.transform = 'translateZ(0px)';
-    spin.appendChild(front);
-    // edge layers give the logo thickness when seen from the side
-    for (let k = 1; k < LAYERS; k++) {
+    // A thin, solid coin. Each side has its own face and rim layers that only show
+    // from that side, so the logo reads correctly front and back with no ghosting.
+    const DEPTH = 6, LAYERS = 14, step = DEPTH / LAYERS;
+    const layer = (z, back, cls) => {
       const s = document.createElement('span');
-      s.className = 'side';
-      s.style.transform = 'translateZ(' + (-k * DEPTH / LAYERS).toFixed(2) + 'px)';
-      s.style.filter = 'brightness(' + (0.5 - k * 0.02).toFixed(2) + ')';
-      spin.appendChild(s);
+      s.className = cls;
+      s.style.transform = 'translateZ(' + z.toFixed(3) + 'px)' + (back ? ' rotateY(180deg)' : '');
+      return s;
+    };
+    for (let k = LAYERS; k >= 1; k--) {
+      spin.appendChild(layer(DEPTH / 2 - k * step, false, 'side'));   // rim seen from the front
+      spin.appendChild(layer(-DEPTH / 2 + k * step, true, 'side'));   // rim seen from the back
     }
-    // back face, so the logo reads correctly when it turns round
-    const back = document.createElement('span');
-    back.style.transform = 'translateZ(' + (-DEPTH) + 'px) rotateY(180deg)';
-    spin.appendChild(back);
+    spin.appendChild(layer(DEPTH / 2, false, 'face'));
+    spin.appendChild(layer(-DEPTH / 2, true, 'face'));
     obj.appendChild(spin);
     if (reduceMotion) return;
 

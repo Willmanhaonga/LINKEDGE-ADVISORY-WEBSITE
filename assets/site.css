@@ -316,8 +316,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 /* Constant spin (user request): linear, because it is constant motion */
 .logo3d-spin{position:absolute;inset:0;transform-style:preserve-3d;animation:logospin 2s linear infinite}
 @keyframes logospin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-.logo3d-spin span{position:absolute;inset:0;background:url("mark-light.png") center/contain no-repeat;backface-visibility:hidden}
-.logo3d-spin span.side{backface-visibility:visible}
+.logo3d-spin span{position:absolute;inset:0;background:url("mark-light.png") center/contain no-repeat;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+/* Edge: one even tone so the thickness reads as a solid rim, not a ghost copy */
+.logo3d-spin span.side{filter:brightness(.72) saturate(.9)}
 .logo3d.paused .logo3d-spin{animation-play-state:paused}
 
 /* ---------- Hover tilt (fine pointers only, set from JS) ---------- */
