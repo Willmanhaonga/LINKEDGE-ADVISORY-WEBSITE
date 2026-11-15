@@ -147,6 +147,32 @@
     schedule(DUR);
   })();
 
+  /* ---------- 3D scroll entrances (once) ---------- */
+  (function entrances() {
+    const groups = [
+      ['.disc', () => 'rise', 0],
+      ['.rules .rule', () => 'rise', 70],
+      ['.pk', (el, k) => ['door-l', 'rise', 'door-r'][k] || 'rise', 90],
+      ['.serve-row', (el, k) => (k % 2 ? 'door-r' : 'door-l'), 0],
+      ['.person', () => 'turn', 80],
+      ['.steps li', () => 'rise', 80],
+      ['.form', () => 'tilt', 0],
+    ];
+    const els = [];
+    groups.forEach(([sel, kind, stagger]) => {
+      document.querySelectorAll(sel).forEach((el, k) => {
+        el.dataset['3d'] = kind(el, k);
+        if (stagger) el.style.setProperty('--d', (k * stagger) + 'ms');
+        els.push(el);
+      });
+    });
+    if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+  })();
+
   /* ---------- Section headings reveal once ---------- */
   const reveals = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {

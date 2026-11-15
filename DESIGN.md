@@ -29,3 +29,6 @@ The **Next TRA deadlines** panel in the hero calculates the next four statutory 
 
 ## Figma
 Design system and hero concept: https://www.figma.com/design/939ILf8PeI8hNqPRxF05oK
+
+## Scroll entrances (3D)
+Each content type enters once as it scrolls into view, with its own motion: service rows and deadline cells tilt up from below; the outer package cards swing in like doors while the middle one rises; "Who we work with" rows swing from alternating sides; team portraits turn toward the visitor in sequence; steps rise in order; the form tilts up. 900ms strong ease-out, transform and opacity only. Reduced motion: fade only.
