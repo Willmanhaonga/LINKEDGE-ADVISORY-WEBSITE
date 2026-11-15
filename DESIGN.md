@@ -22,7 +22,7 @@
 All fonts are self-hosted in `assets/fonts` (SIL Open Font License).
 
 ## Motion
-Hero slideshow: four Dar es Salaam photos, 6 seconds each, 1.6s crossfade with a slow linear zoom. Progress bars to jump between photos and a pause button; pauses when the tab is hidden or the hero is scrolled away. With reduced motion: no zoom, short fade. Section headings reveal once on scroll. Buttons press to 0.97 scale in 160ms. Hover effects only on mouse devices. With "reduce motion" switched on, only gentle fades remain. Nothing loops.
+Hero slideshow: four Dar es Salaam photos, 4 seconds each, 1.6s crossfade with a slow linear zoom. Progress bars to jump between photos and a pause button; pauses when the tab is hidden or the hero is scrolled away. With reduced motion: no zoom, short fade. Section headings reveal once on scroll. Buttons press to 0.97 scale in 160ms. Hover effects only on mouse devices. With "reduce motion" switched on, only gentle fades remain. Nothing loops.
 
 ## Signature
 The **Next TRA deadlines** panel in the hero calculates the next four statutory deadlines from today's date (PAYE/SDL/withholding tax on the 7th, VAT on the 20th, quarterly provisional tax, final return).
@@ -32,3 +32,11 @@ Design system and hero concept: https://www.figma.com/design/939ILf8PeI8hNqPRxF0
 
 ## Scroll entrances (3D)
 Each content type enters once as it scrolls into view, with its own motion: service rows and deadline cells tilt up from below; the outer package cards swing in like doors while the middle one rises; "Who we work with" rows swing from alternating sides; team portraits turn toward the visitor in sequence; steps rise in order; the form tilts up. 900ms strong ease-out, transform and opacity only. Reduced motion: fade only.
+
+## Also on the page
+- 3D logo above the headline: the chain mark extruded in layers, one turn on load, then follows the mouse slightly (mouse devices only).
+- Hover tilt on package cards and team photos (mouse devices only).
+- Deadline counters count up once when the calendar appears.
+- Stronger 3D scroll entrances on computers; lighter versions on phones.
+- FAQ section (native accordion), opening hours, Google map of the office (loads only on the live site).
+- Visitor statistics: GoatCounter (no cookies). Account code: linkedgeadvisory.

@@ -75,6 +75,21 @@
       frag.append(li);
     });
     list.replaceChildren(frag);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Count the days up once, so the urgency reads as it appears
+    list.querySelectorAll('.in').forEach((pill) => {
+      const m = pill.textContent.match(/^In (\d+) days$/);
+      if (!m) return;
+      const target = +m[1], start = performance.now() + 500, dur = 900;
+      pill.textContent = 'In 0 days';
+      const tick = (now) => {
+        const p = Math.min(1, Math.max(0, (now - start) / dur));
+        const eased = 1 - Math.pow(1 - p, 3);
+        const n = Math.round(target * eased); pill.textContent = 'In ' + n + (n === 1 ? ' day' : ' days');
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
   }
   renderCalendar();
 
@@ -86,7 +101,7 @@
     const slides = [...media.querySelectorAll('.slide')];
     const dots = [...ctrl.querySelectorAll('.slide-dot')];
     const pauseBtn = ctrl.querySelector('.slide-pause');
-    const DUR = 6000, FADE = 1600;
+    const DUR = 4000, FADE = 1600;
     let i = 0, timer = null, startedAt = 0, remaining = DUR;
     let userPaused = false, hidden = false, offscreen = false;
 
@@ -145,6 +160,67 @@
     }
     dots[0].classList.add('is-active');
     schedule(DUR);
+  })();
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* ---------- 3D logo: extruded chain mark, one turn on load, then follows the pointer ---------- */
+  (function logo3d() {
+    const wrap = document.querySelector('.logo3d');
+    if (!wrap) return;
+    const obj = wrap.querySelector('.logo3d-obj');
+    const LAYERS = 10;
+    for (let k = LAYERS; k >= 0; k--) {
+      const s = document.createElement('span');
+      s.style.transform = 'translateZ(' + (-k * 1.4) + 'px)';
+      if (k > 0) s.style.filter = 'brightness(' + (0.55 - k * 0.025) + ')';
+      obj.appendChild(s);
+    }
+    if (reduceMotion || !finePointer) return;
+    setTimeout(() => {
+      wrap.classList.add('live');
+      let raf = 0, px = 0, py = 0;
+      window.addEventListener('pointermove', (e) => {
+        px = e.clientX / window.innerWidth - 0.5; py = e.clientY / window.innerHeight - 0.5;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          obj.style.setProperty('--rx', (-18 + px * 40).toFixed(2));
+          obj.style.setProperty('--ry', (-py * 24).toFixed(2));
+        });
+      }, { passive: true });
+    }, 2000);
+  })();
+
+  /* ---------- Hover tilt on package cards and team photos (mouse only) ---------- */
+  if (finePointer && !reduceMotion) {
+    document.querySelectorAll('.pk, .person img').forEach((el) => {
+      const host = el.closest('[data-3d]') || el;
+      el.addEventListener('pointermove', (e) => {
+        if (host.hasAttribute('data-3d') && !host.classList.contains('in')) return;
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transition = 'transform 160ms cubic-bezier(0.23, 1, 0.32, 1)';
+        el.style.transform = 'perspective(900px) rotateX(' + (-y * 8).toFixed(2) + 'deg) rotateY(' + (x * 10).toFixed(2) + 'deg) translateZ(6px)';
+      });
+      el.addEventListener('pointerleave', () => {
+        el.style.transition = 'transform 500ms cubic-bezier(0.23, 1, 0.32, 1)';
+        el.style.transform = '';
+      });
+    });
+  }
+
+  /* ---------- Map: load the Google map only on the live site, when it comes near ---------- */
+  (function map() {
+    const frame = document.querySelector('.map iframe');
+    if (!frame) return;
+    if (window.self !== window.top) return; // previews inside other pages keep the link card
+    const load = () => { frame.addEventListener('load', () => frame.classList.add('ready'), { once: true }); frame.src = frame.dataset.src; };
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { load(); io.disconnect(); } }, { rootMargin: '400px 0px' });
+      io.observe(frame);
+    } else load();
   })();
 
   /* ---------- 3D scroll entrances (once) ---------- */
