@@ -78,6 +78,75 @@
   }
   renderCalendar();
 
+  /* ---------- Hero slideshow: 6s per photo, crossfade + slow drift ---------- */
+  (function slideshow() {
+    const media = document.querySelector('.hero-media');
+    const ctrl = document.querySelector('.slide-ctrl');
+    if (!media || !ctrl) return;
+    const slides = [...media.querySelectorAll('.slide')];
+    const dots = [...ctrl.querySelectorAll('.slide-dot')];
+    const pauseBtn = ctrl.querySelector('.slide-pause');
+    const DUR = 6000, FADE = 1600;
+    let i = 0, timer = null, startedAt = 0, remaining = DUR;
+    let userPaused = false, hidden = false, offscreen = false;
+
+    // Load the other photos after the page is ready, so the first view stays fast
+    const loadRest = () => slides.forEach(s => { const img = s.querySelector('img[data-src]'); if (img) { img.src = img.dataset.src; img.removeAttribute('data-src'); } });
+    if (document.readyState === 'complete') setTimeout(loadRest, 300); else window.addEventListener('load', () => setTimeout(loadRest, 300));
+
+    const restartFill = (dot) => { dot.classList.remove('is-active'); void dot.offsetWidth; dot.classList.add('is-active'); };
+
+    function show(n) {
+      if (n === i) return;
+      const prev = slides[i];
+      prev.classList.remove('is-active'); prev.classList.add('is-leaving');
+      setTimeout(() => prev.classList.remove('is-leaving'), FADE + 50);
+      i = (n + slides.length) % slides.length;
+      const next = slides[i];
+      const img = next.querySelector('img'); if (img.dataset.src) loadRest();
+      next.classList.add('is-active');
+      dots.forEach((d, k) => {
+        d.classList.toggle('done', k < i);
+        d.classList.remove('is-active');
+        d.removeAttribute('aria-current');
+      });
+      dots[i].setAttribute('aria-current', 'true');
+      restartFill(dots[i]);
+    }
+
+    const isPaused = () => userPaused || hidden || offscreen;
+    function schedule(ms) {
+      clearTimeout(timer);
+      if (isPaused()) return;
+      startedAt = Date.now(); remaining = ms;
+      timer = setTimeout(() => { show(i + 1); schedule(DUR); }, ms);
+    }
+    let wasPaused = false;
+    function applyPause() {
+      const p = isPaused();
+      if (p === wasPaused) return;
+      wasPaused = p;
+      media.classList.toggle('paused', p);
+      ctrl.classList.toggle('paused', p);
+      if (p) { clearTimeout(timer); remaining = Math.max(0, remaining - (Date.now() - startedAt)); }
+      else schedule(remaining || DUR);
+    }
+
+    dots.forEach((d, k) => d.addEventListener('click', () => { show(k); remaining = DUR; startedAt = Date.now(); if (!isPaused()) schedule(DUR); }));
+    pauseBtn.addEventListener('click', () => {
+      userPaused = !userPaused;
+      pauseBtn.setAttribute('aria-pressed', String(userPaused));
+      pauseBtn.setAttribute('aria-label', userPaused ? 'Play background photos' : 'Pause background photos');
+      applyPause();
+    });
+    document.addEventListener('visibilitychange', () => { hidden = document.hidden; applyPause(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { offscreen = !e.isIntersecting; applyPause(); }).observe(media);
+    }
+    dots[0].classList.add('is-active');
+    schedule(DUR);
+  })();
+
   /* ---------- Section headings reveal once ---------- */
   const reveals = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {

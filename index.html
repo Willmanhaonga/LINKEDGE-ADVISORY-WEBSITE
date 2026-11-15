@@ -51,7 +51,10 @@
 
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-media" aria-hidden="true">
-      <img src="assets/hero-dar.jpg" alt="" width="740" height="416" fetchpriority="high" decoding="async">
+      <div class="slide is-active" style="--pos:62% 40%;--pos-m:58% 30%"><img src="assets/hero-dar.jpg" alt="" width="740" height="416" fetchpriority="high" decoding="async"></div>
+      <div class="slide" style="--pos:60% 45%;--pos-m:62% 40%"><img data-src="assets/hero-bus.jpg" alt="" width="1680" height="1122" decoding="async"></div>
+      <div class="slide" style="--pos:50% 50%;--pos-m:55% 50%"><img data-src="assets/hero-bridge.jpg" alt="" width="1920" height="640" decoding="async"></div>
+      <div class="slide" style="--pos:50% 45%;--pos-m:48% 40%"><img data-src="assets/hero-sunset.jpg" alt="" width="1680" height="945" decoding="async"></div>
     </div>
     <div class="wrap hero-in">
       <div class="hero-copy">
@@ -77,6 +80,17 @@
         </ol>
         <p class="cal-foot">Miss one and TRA adds penalties and interest. <a href="#deadlines">See how we keep you on time</a></p>
       </aside>
+    </div>
+
+    <div class="wrap slide-ctrl" role="group" aria-label="Background photos">
+      <button type="button" class="slide-dot is-active" aria-label="Photo 1 of 4: Dar es Salaam skyline" aria-current="true"><span></span></button>
+      <button type="button" class="slide-dot" aria-label="Photo 2 of 4: Rapid bus on Kivukoni Front"><span></span></button>
+      <button type="button" class="slide-dot" aria-label="Photo 3 of 4: Tanzanite Bridge"><span></span></button>
+      <button type="button" class="slide-dot" aria-label="Photo 4 of 4: City centre at sunset"><span></span></button>
+      <button type="button" class="slide-pause" aria-pressed="false" aria-label="Pause background photos">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><path d="M9 6v12M15 6v12"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+      </button>
     </div>
 
     <div class="pillars">

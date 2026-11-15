@@ -105,14 +105,36 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero{position:relative;background:var(--navy);color:#fff;overflow:hidden;isolation:isolate}
 /* Hero photo: Dar es Salaam skyline under a navy wash so text keeps its contrast */
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy)}
-.hero-media img{width:100%;height:100%;object-fit:cover;object-position:62% 40%;transform-origin:65% 40%}
-.hero-media::after{content:"";position:absolute;inset:0;
+.hero-media::after{content:"";position:absolute;inset:0;z-index:1;
   background:
     linear-gradient(90deg,rgba(1,27,81,.95) 0%,rgba(1,27,81,.9) 38%,rgba(1,27,81,.62) 72%,rgba(1,27,81,.5) 100%),
-    linear-gradient(180deg,rgba(1,27,81,.35) 0%,rgba(1,27,81,0) 30%,rgba(1,27,81,.0) 70%,rgba(1,27,81,.92) 100%)}
-/* One authored moment: the photo settles in once on load */
-.js .hero-media img{opacity:0;transform:scale(1.06);animation:settle 1400ms var(--ease-out) 80ms forwards}
-@keyframes settle{to{opacity:1;transform:none}}
+    linear-gradient(180deg,rgba(1,27,81,.35) 0%,rgba(1,27,81,0) 30%,rgba(1,27,81,0) 70%,rgba(1,27,81,.92) 100%)}
+/* Slideshow: crossfade (ease-in-out, on-screen change) + slow linear drift (constant motion) */
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1600ms var(--ease-in-out)}
+.slide.is-active{opacity:1}
+.slide img{width:100%;height:100%;object-fit:cover;object-position:var(--pos);transform:scale(1.08);transform-origin:60% 45%}
+.slide.is-active img,.slide.is-leaving img{animation:drift 7600ms linear forwards}
+@keyframes drift{from{transform:scale(1.08)}to{transform:scale(1)}}
+.hero-media.paused .slide img{animation-play-state:paused}
+/* First load: the opening photo fades up once */
+.js .slide:first-child{animation:fadeup 900ms var(--ease-out) both}
+@keyframes fadeup{from{opacity:0}}
+
+.slide-ctrl{display:flex;align-items:center;gap:6px;padding-bottom:var(--s5)}
+.slide-dot{appearance:none;background:none;border:0;padding:20px 0;width:44px;cursor:pointer}
+.slide-dot span{display:block;height:3px;border-radius:2px;background:rgba(169,193,228,.32);overflow:hidden;position:relative}
+.slide-dot span::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
+.slide-dot.done span::after{transform:scaleX(1)}
+.slide-dot.is-active span::after{animation:fill var(--dur,6000ms) linear forwards}
+.hero-media.paused ~ .slide-ctrl .slide-dot.is-active span::after,.slide-ctrl.paused .slide-dot.is-active span::after{animation-play-state:paused}
+@keyframes fill{to{transform:scaleX(1)}}
+.slide-pause{appearance:none;background:none;border:1px solid rgba(169,193,228,.3);border-radius:999px;width:36px;height:36px;margin-left:10px;display:grid;place-items:center;color:#fff;cursor:pointer;transition:border-color 200ms ease,transform 160ms var(--ease-out)}
+.slide-pause:active{transform:scale(.94)}
+.slide-pause svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.slide-pause .i-play{display:none;fill:currentColor;stroke:none}
+.slide-pause[aria-pressed="true"] .i-pause{display:none}
+.slide-pause[aria-pressed="true"] .i-play{display:block}
+@media (hover:hover) and (pointer:fine){.slide-pause:hover{border-color:var(--sky-soft)}}
 
 .hero-in{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:clamp(40px,6vw,96px);align-items:center;padding-top:clamp(56px,8vw,112px);padding-bottom:clamp(56px,7vw,96px)}
 .hero h1{font-size:clamp(46px,6.6vw,92px);line-height:.96;letter-spacing:-.025em;max-width:12ch}
@@ -304,7 +326,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   body{font-size:16px}
   .brand img{height:32px}
   .wm-name{font-size:22px}
-  .hero-media img{object-position:58% 30%}
+  .slide img{object-position:var(--pos-m)}
   .actions .btn{flex:1 1 100%}
   .cal{padding:var(--s5) var(--s5) var(--s4)}
   .cal-list li{grid-template-columns:60px 1fr}
@@ -319,8 +341,9 @@ ul,ol{margin:0;padding:0;list-style:none}
 /* ---------- Reduced motion: fewer, gentler ---------- */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .js .hero-media img{animation:fade 600ms ease forwards;transform:none}
-  @keyframes fade{to{opacity:1}}
+  .slide{transition-duration:700ms}
+  .slide img,.slide.is-active img,.slide.is-leaving img{animation:none;transform:none}
+  .js .slide:first-child{animation:none}
   .js .reveal{clip-path:none;transform:none;opacity:0;transition:opacity 400ms ease}
   .js .reveal.in{opacity:1}
   .btn:active,.wa-float:active{transform:none}
