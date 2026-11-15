@@ -107,8 +107,8 @@ ul,ol{margin:0;padding:0;list-style:none}
 .hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy)}
 .hero-media::after{content:"";position:absolute;inset:0;z-index:1;
   background:
-    linear-gradient(90deg,rgba(1,27,81,.95) 0%,rgba(1,27,81,.9) 38%,rgba(1,27,81,.62) 72%,rgba(1,27,81,.5) 100%),
-    linear-gradient(180deg,rgba(1,27,81,.35) 0%,rgba(1,27,81,0) 30%,rgba(1,27,81,0) 70%,rgba(1,27,81,.92) 100%)}
+    linear-gradient(90deg,rgba(1,27,81,.9) 0%,rgba(1,27,81,.86) 40%,rgba(1,27,81,.7) 49%,rgba(1,27,81,.42) 58%,rgba(1,27,81,.14) 78%,rgba(1,27,81,.06) 100%),
+    linear-gradient(180deg,rgba(1,27,81,.3) 0%,rgba(1,27,81,0) 22%,rgba(1,27,81,0) 72%,rgba(1,27,81,.9) 100%)}
 /* Slideshow: crossfade (ease-in-out, on-screen change) + slow linear drift (constant motion) */
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1600ms var(--ease-in-out)}
 .slide.is-active{opacity:1}
@@ -137,10 +137,10 @@ ul,ol{margin:0;padding:0;list-style:none}
 @media (hover:hover) and (pointer:fine){.slide-pause:hover{border-color:var(--sky-soft)}}
 
 .hero-in{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:clamp(40px,6vw,96px);align-items:center;padding-top:clamp(56px,8vw,112px);padding-bottom:clamp(56px,7vw,96px)}
-.hero h1{font-size:clamp(46px,6.6vw,92px);line-height:.96;letter-spacing:-.025em;max-width:12ch}
-.hero .lede{color:var(--sky-soft);margin-top:var(--s6);max-width:48ch;letter-spacing:.005em}
+.hero h1{text-shadow:0 2px 24px rgba(1,27,81,.45);font-size:clamp(46px,6.6vw,92px);line-height:.96;letter-spacing:-.025em;max-width:12ch}
+.hero .lede{color:#E3ECF8;text-shadow:0 1px 14px rgba(1,27,81,.65);margin-top:var(--s6);max-width:48ch;letter-spacing:.005em}
 .actions{display:flex;flex-wrap:wrap;gap:var(--s3);margin-top:var(--s7)}
-.call{margin-top:var(--s5);color:var(--sky-soft);font-size:15px}
+.call{margin-top:var(--s5);color:#E3ECF8;font-size:15px;text-shadow:0 1px 12px rgba(1,27,81,.65)}
 .call a{color:#fff;font-weight:600;font-variant-numeric:tabular-nums}
 
 /* Compliance calendar (signature) */
@@ -292,7 +292,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1080px){
-  .hero-media::after{background:linear-gradient(180deg,rgba(1,27,81,.8) 0%,rgba(1,27,81,.88) 50%,rgba(1,27,81,.97) 100%)}
+  .hero-media::after{background:linear-gradient(180deg,rgba(1,27,81,.7) 0%,rgba(1,27,81,.76) 50%,rgba(1,27,81,.95) 100%)}
   .hero-in,.pillars-in{grid-template-columns:1fr}
   .cal{max-width:560px}
   .services{grid-template-columns:1fr}
