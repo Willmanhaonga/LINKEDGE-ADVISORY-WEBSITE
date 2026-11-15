@@ -22,7 +22,7 @@
 All fonts are self-hosted in `assets/fonts` (SIL Open Font License).
 
 ## Motion
-One authored moment: the logo's chain draws once on load. Section headings reveal once on scroll. Buttons press to 0.97 scale in 160ms. Hover effects only on mouse devices. With "reduce motion" switched on, only gentle fades remain. Nothing loops.
+One authored moment: the Dar es Salaam skyline photo settles in once on load. Section headings reveal once on scroll. Buttons press to 0.97 scale in 160ms. Hover effects only on mouse devices. With "reduce motion" switched on, only gentle fades remain. Nothing loops.
 
 ## Signature
 The **Next TRA deadlines** panel in the hero calculates the next four statutory deadlines from today's date (PAYE/SDL/withholding tax on the 7th, VAT on the 20th, quarterly provisional tax, final return).

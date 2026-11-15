@@ -12,6 +12,7 @@
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preload" href="assets/fonts/zilla-slab-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/hero-dar.jpg" as="image">
 <link rel="stylesheet" href="assets/site.css">
 <script>document.documentElement.classList.add('js')</script>
 </head>
@@ -49,12 +50,9 @@
 <main id="main">
 
   <section class="hero" aria-labelledby="hero-title">
-    <svg class="chain" viewBox="0 0 420 420" aria-hidden="true" focusable="false">
-      <g transform="rotate(-38 210 210)">
-        <path pathLength="1" class="link link-a" d="M120 40 V250 A60 60 0 0 0 240 250 V130"/>
-        <path pathLength="1" class="link link-b" d="M300 380 V170 A60 60 0 0 0 180 170 V290"/>
-      </g>
-    </svg>
+    <div class="hero-media" aria-hidden="true">
+      <img src="assets/hero-dar.jpg" alt="" width="740" height="416" fetchpriority="high" decoding="async">
+    </div>
     <div class="wrap hero-in">
       <div class="hero-copy">
         <h1 id="hero-title">Your trusted partner in every decision.</h1>
