@@ -199,6 +199,13 @@ ul,ol{margin:0;padding:0;list-style:none}
 .serve-row h3{font-size:clamp(30px,3.4vw,44px);color:var(--navy)}
 .serve-row p{color:var(--muted);max-width:56ch}
 
+/* Team */
+.team .split-head h2{color:var(--navy)}
+.people{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(20px,2.5vw,32px)}
+.person img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:var(--radius);background:#DCE4EF}
+.person h3{font-size:22px;color:var(--navy);margin-top:var(--s5)}
+.person p{color:var(--muted);font-size:15px;margin-top:6px}
+
 /* Process */
 .process{background:var(--paper-2)}
 .process .split-head h2{color:var(--navy)}
@@ -266,6 +273,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   .sec-side{position:static}
   .sec-side h2{max-width:14ch}
   .pk-grid{grid-template-columns:1fr;max-width:640px}
+  .people{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:var(--s7)}
   .steps{grid-template-columns:1fr 1fr;row-gap:var(--s7)}
   .steps li:nth-child(2)::after{display:none}
   .contact-in{grid-template-columns:1fr}
