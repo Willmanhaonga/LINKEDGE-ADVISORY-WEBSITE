@@ -128,7 +128,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .slide-dot.is-active span::after{animation:fill var(--dur,6000ms) linear forwards}
 .hero-media.paused ~ .slide-ctrl .slide-dot.is-active span::after,.slide-ctrl.paused .slide-dot.is-active span::after{animation-play-state:paused}
 @keyframes fill{to{transform:scaleX(1)}}
-.slide-pause{appearance:none;background:none;border:1px solid rgba(169,193,228,.3);border-radius:999px;width:36px;height:36px;margin-left:10px;display:grid;place-items:center;color:#fff;cursor:pointer;transition:border-color 200ms ease,transform 160ms var(--ease-out)}
+.slide-pause{appearance:none;background:none;border:1px solid rgba(169,193,228,.3);border-radius:999px;width:44px;height:44px;margin-left:8px;display:grid;place-items:center;color:#fff;cursor:pointer;transition:border-color 200ms ease,transform 160ms var(--ease-out)}
 .slide-pause:active{transform:scale(.94)}
 .slide-pause svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .slide-pause .i-play{display:none;fill:currentColor;stroke:none}
