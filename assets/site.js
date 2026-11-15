@@ -165,32 +165,50 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  /* ---------- 3D logo: extruded chain mark, one turn on load, then follows the pointer ---------- */
+  /* ---------- 3D logo: extruded chain mark spinning constantly; leans toward the mouse ---------- */
   (function logo3d() {
     const wrap = document.querySelector('.logo3d');
     if (!wrap) return;
     const obj = wrap.querySelector('.logo3d-obj');
-    const LAYERS = 10;
-    for (let k = LAYERS; k >= 0; k--) {
+    const spin = document.createElement('div');
+    spin.className = 'logo3d-spin';
+    const DEPTH = 14, LAYERS = 10;
+    // front face
+    const front = document.createElement('span');
+    front.style.transform = 'translateZ(0px)';
+    spin.appendChild(front);
+    // edge layers give the logo thickness when seen from the side
+    for (let k = 1; k < LAYERS; k++) {
       const s = document.createElement('span');
-      s.style.transform = 'translateZ(' + (-k * 1.4) + 'px)';
-      if (k > 0) s.style.filter = 'brightness(' + (0.55 - k * 0.025) + ')';
-      obj.appendChild(s);
+      s.className = 'side';
+      s.style.transform = 'translateZ(' + (-k * DEPTH / LAYERS).toFixed(2) + 'px)';
+      s.style.filter = 'brightness(' + (0.5 - k * 0.02).toFixed(2) + ')';
+      spin.appendChild(s);
     }
-    if (reduceMotion || !finePointer) return;
-    setTimeout(() => {
-      wrap.classList.add('live');
-      let raf = 0, px = 0, py = 0;
-      window.addEventListener('pointermove', (e) => {
-        px = e.clientX / window.innerWidth - 0.5; py = e.clientY / window.innerHeight - 0.5;
-        if (raf) return;
-        raf = requestAnimationFrame(() => {
-          raf = 0;
-          obj.style.setProperty('--rx', (-18 + px * 40).toFixed(2));
-          obj.style.setProperty('--ry', (-py * 24).toFixed(2));
-        });
-      }, { passive: true });
-    }, 2000);
+    // back face, so the logo reads correctly when it turns round
+    const back = document.createElement('span');
+    back.style.transform = 'translateZ(' + (-DEPTH) + 'px) rotateY(180deg)';
+    spin.appendChild(back);
+    obj.appendChild(spin);
+    if (reduceMotion) return;
+
+    // Pause the spin when it is off screen or the tab is hidden
+    let off = false, hid = false;
+    const sync = () => wrap.classList.toggle('paused', off || hid);
+    document.addEventListener('visibilitychange', () => { hid = document.hidden; sync(); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { off = !e.isIntersecting; sync(); }).observe(wrap);
+
+    if (!finePointer) return;
+    let raf = 0, px = 0, py = 0;
+    window.addEventListener('pointermove', (e) => {
+      px = e.clientX / window.innerWidth - 0.5; py = e.clientY / window.innerHeight - 0.5;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        obj.style.setProperty('--ry', (-py * 30).toFixed(2));
+        obj.style.setProperty('--rz', (px * 10).toFixed(2));
+      });
+    }, { passive: true });
   })();
 
   /* ---------- Hover tilt on package cards and team photos (mouse only) ---------- */

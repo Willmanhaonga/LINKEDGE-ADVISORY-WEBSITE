@@ -312,11 +312,13 @@ ul,ol{margin:0;padding:0;list-style:none}
 .disciplines-line{display:flex;flex-wrap:wrap;gap:6px 0;margin-top:var(--s5);font:500 13px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#E3ECF8}
 .disciplines-line span+span::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--sky);margin:0 14px;vertical-align:middle;transform:translateY(-1px)}
 .logo3d{width:92px;height:69px;margin-bottom:var(--s6);perspective:700px}
-.logo3d-obj{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(calc(var(--ry,0) * 1deg)) rotateY(calc(var(--rx,-18) * 1deg));transition:transform 600ms var(--ease-out)}
-.logo3d-obj span{position:absolute;inset:0;background:url("mark-light.png") center/contain no-repeat}
-.js .logo3d-obj{animation:logoturn 1600ms var(--ease-in-out) 300ms both}
-@keyframes logoturn{from{transform:rotateY(-200deg) rotateX(10deg)}to{transform:rotateX(0deg) rotateY(-18deg)}}
-.logo3d.live .logo3d-obj{animation:none}
+.logo3d-obj{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:rotateX(calc(var(--ry,0) * 1deg)) rotateZ(calc(var(--rz,0) * 1deg));transition:transform 500ms var(--ease-out)}
+/* Constant spin (user request): linear, because it is constant motion */
+.logo3d-spin{position:absolute;inset:0;transform-style:preserve-3d;animation:logospin 2s linear infinite}
+@keyframes logospin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+.logo3d-spin span{position:absolute;inset:0;background:url("mark-light.png") center/contain no-repeat;backface-visibility:hidden}
+.logo3d-spin span.side{backface-visibility:visible}
+.logo3d.paused .logo3d-spin{animation-play-state:paused}
 
 /* ---------- Hover tilt (fine pointers only, set from JS) ---------- */
 .tilt{transform-style:preserve-3d}
@@ -420,6 +422,6 @@ ul,ol{margin:0;padding:0;list-style:none}
   .btn:active,.wa-float:active{transform:none}
   .nav{transform:none!important}
   .js [data-3d]{transform:none!important;transition:opacity 400ms ease var(--d,0ms)}
-  .js .logo3d-obj{animation:none}
+  .logo3d-spin{animation:none;transform:rotateY(-18deg)}
   .faq-list details::details-content{transition:none}
 }

@@ -34,7 +34,7 @@ Design system and hero concept: https://www.figma.com/design/939ILf8PeI8hNqPRxF0
 Each content type enters once as it scrolls into view, with its own motion: service rows and deadline cells tilt up from below; the outer package cards swing in like doors while the middle one rises; "Who we work with" rows swing from alternating sides; team portraits turn toward the visitor in sequence; steps rise in order; the form tilts up. 900ms strong ease-out, transform and opacity only. Reduced motion: fade only.
 
 ## Also on the page
-- 3D logo above the headline: the chain mark extruded in layers, one turn on load, then follows the mouse slightly (mouse devices only).
+- 3D logo above the headline: the chain mark extruded in layers, spinning constantly (one turn every 2s, owner request) and leaning toward the mouse on computers. Pauses off screen or in hidden tabs; still with reduced motion.
 - Hover tilt on package cards and team photos (mouse devices only).
 - Deadline counters count up once when the calendar appears.
 - Stronger 3D scroll entrances on computers; lighter versions on phones.
