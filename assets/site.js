@@ -1,0 +1,172 @@
+(() => {
+  'use strict';
+  document.documentElement.classList.add('js');
+
+  const WA_NUMBER = '255719856488';
+  // Where form submissions go. Leave empty until an email service is set up
+  // (for example a Formspree endpoint such as "https://formspree.io/f/xxxxxxx").
+  const FORM_ENDPOINT = '';
+
+  const yr = document.getElementById('yr');
+  if (yr) yr.textContent = new Date().getFullYear();
+
+  /* ---------- Mobile menu ---------- */
+  const menuBtn = document.querySelector('.menu-btn');
+  const nav = document.getElementById('nav');
+  const setMenu = (open) => {
+    nav.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.querySelector('.menu-label').textContent = open ? 'Close' : 'Menu';
+  };
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); menuBtn.focus(); }
+  });
+
+  /* ---------- Compliance calendar (next TRA deadlines) ---------- */
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const lastDay = (y, m) => new Date(y, m + 1, 0).getDate();
+
+  function deadlines(from, count) {
+    const items = [];
+    const start = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    for (let i = 0; i < 14 && items.length < 40; i++) {
+      const y = start.getFullYear() + Math.floor((start.getMonth() + i) / 12);
+      const m = (start.getMonth() + i) % 12;
+      const prev = FULL[(m + 11) % 12];
+      items.push({ d: new Date(y, m, 7), title: 'PAYE, SDL & withholding tax', note: 'For ' + prev });
+      items.push({ d: new Date(y, m, 20), title: 'VAT return & payment', note: 'For ' + prev });
+      if ([2, 5, 8, 11].includes(m)) {
+        const q = [2, 5, 8, 11].indexOf(m) + 1;
+        const ord = ['1st', '2nd', '3rd', '4th'][q - 1];
+        items.push({ d: new Date(y, m, lastDay(y, m)), title: 'Provisional tax, ' + ord + ' instalment', note: 'December year-end companies' });
+      }
+      if (m === 5) items.push({ d: new Date(y, 5, 30), title: 'Final income tax return', note: 'For December ' + (y - 1) + ' year-end' });
+    }
+    return items
+      .filter(x => x.d >= start)
+      .sort((a, b) => a.d - b.d || a.title.localeCompare(b.title))
+      .slice(0, count);
+  }
+
+  function renderCalendar() {
+    const list = document.getElementById('cal-list');
+    const today = document.getElementById('cal-today');
+    if (!list) return;
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    today.textContent = 'Today ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
+    const frag = document.createDocumentFragment();
+    deadlines(now, 4).forEach(x => {
+      const days = Math.round((x.d - midnight) / 864e5);
+      const li = document.createElement('li');
+      const iso = x.d.getFullYear() + '-' + String(x.d.getMonth() + 1).padStart(2, '0') + '-' + String(x.d.getDate()).padStart(2, '0');
+      const t = document.createElement('time'); t.dateTime = iso; t.textContent = x.d.getDate() + ' ' + MONTHS[x.d.getMonth()];
+      const body = document.createElement('div');
+      const s = document.createElement('strong'); s.textContent = x.title;
+      const n = document.createElement('span'); n.textContent = x.note;
+      body.append(s, n);
+      const pill = document.createElement('span');
+      pill.className = 'in' + (days <= 7 ? ' soon' : '');
+      pill.textContent = days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : 'In ' + days + ' days';
+      li.append(t, body, pill);
+      frag.append(li);
+    });
+    list.replaceChildren(frag);
+  }
+  renderCalendar();
+
+  /* ---------- Section headings reveal once ---------- */
+  const reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('in'));
+  }
+
+  /* ---------- Floating WhatsApp: hidden while the hero's own button is visible ---------- */
+  const fab = document.querySelector('.wa-float');
+  const heroActions = document.querySelector('.hero .actions');
+  if (fab && heroActions && 'IntersectionObserver' in window) {
+    fab.classList.add('hide');
+    new IntersectionObserver(([e]) => fab.classList.toggle('hide', e.isIntersecting)).observe(heroActions);
+  }
+
+  /* ---------- Package buttons pre-select the form ---------- */
+  const service = document.getElementById('f-service');
+  document.querySelectorAll('[data-pkg]').forEach(b => b.addEventListener('click', () => { service.value = b.dataset.pkg; }));
+
+  /* ---------- Consultation form ---------- */
+  const form = document.getElementById('quote-form');
+  const status = document.getElementById('form-status');
+  const fields = {
+    name: { el: document.getElementById('f-name'), err: document.getElementById('e-name') },
+    phone: { el: document.getElementById('f-phone'), err: document.getElementById('e-phone') },
+    email: { el: document.getElementById('f-email'), err: document.getElementById('e-email') },
+  };
+  const setErr = (f, msg) => {
+    f.err.textContent = msg;
+    if (msg) f.el.setAttribute('aria-invalid', 'true'); else f.el.removeAttribute('aria-invalid');
+  };
+  Object.values(fields).forEach(f => f.el.addEventListener('input', () => setErr(f, '')));
+
+  function validate(d) {
+    let first = null;
+    if (!d.name.trim()) { setErr(fields.name, 'Please add your name.'); first = first || fields.name.el; }
+    const digits = d.phone.replace(/\D/g, '');
+    if (digits.length < 9) { setErr(fields.phone, 'Please add a phone or WhatsApp number we can reach, for example +255 712 345 678.'); first = first || fields.phone.el; }
+    if (d.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email.trim())) { setErr(fields.email, 'This email looks incomplete. Check it, or leave it empty.'); first = first || fields.email.el; }
+    if (first) first.focus();
+    return !first;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form));
+    status.className = 'form-status';
+    status.replaceChildren();
+    if (!validate(d)) return;
+
+    const lines = [
+      'Hello LinkEdge Advisory,', '',
+      'Name: ' + d.name.trim(),
+      'Company: ' + (d.company.trim() || '-'),
+      'Phone: ' + d.phone.trim(),
+      'Email: ' + (d.email.trim() || '-'),
+      'Service: ' + d.service,
+    ];
+    if (d.message.trim()) lines.push('', d.message.trim());
+    const waLink = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(lines.join('\n'));
+    const btn = form.querySelector('button[type="submit"]');
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const r = await fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
+        if (!r.ok) throw new Error('send failed');
+        form.reset();
+        status.textContent = 'Request sent. We will contact you within one working day.';
+        status.classList.add('show');
+        return;
+      } catch (_) {
+        /* fall back to WhatsApp below */
+      } finally {
+        btn.disabled = false; btn.textContent = 'Send request';
+      }
+    }
+
+    const p = document.createElement('p');
+    p.textContent = 'Your details are ready. Send them to us on WhatsApp and we will reply there.';
+    const a = document.createElement('a');
+    a.className = 'btn btn-wa'; a.href = waLink; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = '<svg aria-hidden="true"><use href="#i-wa"/></svg>Send on WhatsApp';
+    status.append(p, a);
+    status.classList.add('show');
+    a.focus();
+  });
+})();
